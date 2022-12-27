@@ -52,6 +52,7 @@ i {
 .card-header.card-header-tab .card-header-title {
     display: flex;
     align-items: center;
+
     white-space: nowrap;
 }
 
@@ -60,11 +61,7 @@ i {
     margin-right: 0.625rem;
 }
 
-.card-header.card-header-tab .card-header-title {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-}
+
 
 .btn-actions-pane-right {
     margin-left: auto;
@@ -76,7 +73,7 @@ i {
 }
 
 .scroll-area-sm {
-    height: 70vh;
+    max-height: 70vh;
     overflow-x: hidden;
 }
 
@@ -115,6 +112,7 @@ i {
     padding: 1rem;
     flex-direction: row;
     align-items: center;
+    width: 100%;
 }
 
 .widget-content .widget-content-wrapper {
