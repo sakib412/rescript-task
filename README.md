@@ -4,7 +4,7 @@
 
 
 
-### Before running the development server, please run backend server first. You can find the backend server at (backend server)[https://github.com/sakib412/rails-todo]
+### Before running the development server, please run backend server first. You can find the backend server at [Rails backend](https://github.com/sakib412/rails-todo)
 
 # Run development server
 `yarn res:dev` or `npm run res:dev`
