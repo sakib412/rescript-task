@@ -276,28 +276,6 @@ let make = () => {
               </div>
             </div>
           </div>
-          // <div className="d-flex justify-content-center card-footer">
-          //   <ul className="pagination mb-0">
-          //     <li className="page-item">
-          //       <a className="page-link" href="#" ariaLabel="Previous">
-          //         <span ariaHidden={true}> {"«"->React.string} </span>
-          //         <span className="sr-only"> {"Previous"->React.string} </span>
-          //       </a>
-          //     </li>
-          //     <li className="page-item">
-          //       <a className="page-link" href="#"> {"1"->React.string} </a>
-          //     </li>
-          //     <li className="page-item active">
-          //       <a className="page-link" href="#"> {"2"->React.string} </a>
-          //     </li>
-          //     <li className="page-item">
-          //       <a className="page-link" href="#" ariaLabel="Next">
-          //         <span ariaHidden=false> {"»"->React.string} </span>
-          //         <span className="sr-only"> {"Next "->React.string} </span>
-          //       </a>
-          //     </li>
-          //   </ul>
-          // </div>
         </div>
       </div>
     </div>
