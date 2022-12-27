@@ -2,7 +2,7 @@
 
 %%raw("import './App.css'")
 %%raw("import './Task.css'")
-
+@send external focus: Dom.element => unit = "focus"
 module Window = {
   @scope("window") @val
   external alert: string => unit = "alert"
@@ -41,21 +41,34 @@ let make = () => {
   let (title, setTitle) = React.useState(() => "")
   let (taskForm, setTaskForm) = React.useState(() => false)
 
+  let titleInput = React.useRef(Js.Nullable.null)
+
+  React.useEffect1(() => {
+    if taskForm {
+      switch titleInput.current->Js.Nullable.toOption {
+      | Some(dom) => dom->focus
+      | None => ()
+      }
+      None
+    } else {
+      None
+    }
+  }, [taskForm])
+
   React.useEffect0(() => {
     open Promise
-    let _ =
-      Axios.get("http://localhost:3000/api/v1/tasks")
-      ->then(res => {
-        Js.log(res)
-        setTasks(_ => res.data)
-        res->resolve
-      })
-      ->catch(err => {
-        Js.log(err)
 
-        err->reject
-      })
-      ->ignore
+    Axios.get("http://localhost:3000/api/v1/tasks")
+    ->then(res => {
+      setTasks(_ => res.data)
+      res->resolve
+    })
+    ->catch(err => {
+      Js.log(err)
+
+      err->reject
+    })
+    ->ignore
 
     None
   })
@@ -131,7 +144,10 @@ let make = () => {
                   {taskForm == true
                     ? <form className="d-flex mx-3" onSubmit>
                         <input
-                          value={title} onChange={onTitleChange} className="form-control ml-1"
+                          value={title}
+                          ref={ReactDOM.Ref.domRef(titleInput)}
+                          onChange={onTitleChange}
+                          className="form-control ml-1"
                         />
                         <div className="widget-content-right d-flex">
                           <button
@@ -226,16 +242,16 @@ let make = () => {
                                 <div className="widget-content-right">
                                   {task.status == Some("done")
                                     ? <button
-                                        onClick={_e => {
-                                          let _ = updateTask({...task, status: None})
+                                        onClick={_ => {
+                                          updateTask({...task, status: None})->ignore
                                         }}
                                         title="Mark as undone"
                                         className="border-0 btn-transition btn btn-outline-warning">
                                         <i className="fa fa-undo" />
                                       </button>
                                     : <button
-                                        onClick={_e => {
-                                          let _ = updateTask({...task, status: Some("done")})
+                                        onClick={_ => {
+                                          updateTask({...task, status: Some("done")})->ignore
                                         }}
                                         title="Mark as done"
                                         className="border-0 btn-transition btn btn-outline-success">
@@ -244,7 +260,7 @@ let make = () => {
                                   <button
                                     title="Delete"
                                     onClick={_e => {
-                                      let _ = onTaskDelete(task.id)
+                                      onTaskDelete(task.id)->ignore
                                     }}
                                     className="border-0 btn-transition btn btn-outline-danger">
                                     <i className="fa fa-trash" />
