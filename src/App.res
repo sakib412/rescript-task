@@ -35,6 +35,8 @@ module Axios = {
   external put: (string, newTask) => Promise.t<createTaskRes> = "put"
 }
 
+let base_url: string = "https://rails-todo-o0nv.onrender.com"
+
 @react.component
 let make = () => {
   let (tasks, setTasks) = React.useState(() => [])
@@ -58,7 +60,7 @@ let make = () => {
   React.useEffect0(() => {
     open Promise
 
-    Axios.get("http://localhost:3000/api/v1/tasks")
+    Axios.get(`${base_url}/api/v1/tasks`)
     ->then(res => {
       setTasks(_ => res.data)
       res->resolve
@@ -86,7 +88,7 @@ let make = () => {
       open Promise
 
       let _ =
-        Axios.post("http://localhost:3000/api/v1/tasks", {title: Some(title), status: None})
+        Axios.post(`${base_url}/api/v1/tasks`, {title: Some(title), status: None})
         ->then(res => {
           setTasks(prevState => Belt.Array.concat([res.data], prevState))
           setTitle(_ => "")
@@ -110,7 +112,7 @@ let make = () => {
   let onTaskDelete = async taskId => {
     let conf = Window.confirm("Are you sure you want to delete this task?")
     if conf {
-      let _ = await Axios.delete("http://localhost:3000/api/v1/tasks/" ++ taskId->Belt.Int.toString)
+      let _ = await Axios.delete(`${base_url}/api/v1/tasks/` ++ taskId->Belt.Int.toString)
       setTasks(prevState => {prevState->Belt.Array.keep(task => task.id != taskId)})
     } else {
       Js.log("Task not deleted")
@@ -119,7 +121,7 @@ let make = () => {
 
   let updateTask = async task => {
     let res = await Axios.put(
-      "http://localhost:3000/api/v1/tasks/" ++ task.id->Belt.Int.toString,
+      `${base_url}/api/v1/tasks/` ++ task.id->Belt.Int.toString,
       {title: Some(task.title), status: task.status == Some("done") ? Some("done") : Some("")},
     )
     setTasks(prevState => {
