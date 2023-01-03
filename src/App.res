@@ -35,7 +35,7 @@ module Axios = {
   external put: (string, newTask) => Promise.t<createTaskRes> = "put"
 }
 
-let base_url: string = "https://rails-todo-o0nv.onrender.com"
+let base_url: string = "https://rails-todo.up.railway.app"
 
 @react.component
 let make = () => {
