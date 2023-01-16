@@ -24,4 +24,4 @@ yarn-error.log*
 
 # rescript
 *.bs.js
-lib
+/lib

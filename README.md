@@ -2,8 +2,6 @@
 `yarn install` or `npm install`
 
 
-
-
 ### Before running the development server, please run backend server first. You can find the backend server at [Rails backend](https://github.com/sakib412/rails-todo)
 
 # Run development server
