@@ -1,8 +1,9 @@
+// Found this source here: https://github.com/DCKT/rescript-axios, but modified as need
+
 type config
 
 module Headers = {
   type t
-
   external fromObj: Js.t<{..}> => t = "%identity"
   external fromDict: Js.Dict.t<string> => t = "%identity"
 }
@@ -35,6 +36,8 @@ type error<'responseData, 'request> = {
   response: option<response<'responseData>>,
   message: string,
 }
+
+@get external getErrorResponse: Js.Exn.t => option<response<'data>> = "response"
 
 type adapter<'a, 'err> = config => Promise.t<response<'a>>
 
@@ -69,6 +72,26 @@ external makeConfig: (
   ~cancelToken: CancelToken.t=?,
   unit,
 ) => config = ""
+
+type res = {
+  data: Js.Dict.t<string>,
+  status: int,
+  statusText: string,
+  headers: Js.Dict.t<string>,
+  config: config,
+}
+
+type axiosInstance = {
+  get: (string, ~config: config=?, unit) => Promise.t<res>,
+  post: (string, ~data: Js.Dict.t<string>, unit) => Promise.t<res>,
+  put: (string, ~data: Js.Dict.t<string>, ~config: config=?, unit) => Promise.t<res>,
+  patch: (string, ~data: Js.Dict.t<string>, ~config: config=?, unit) => Promise.t<res>,
+  delete: (string, ~config: config=?, unit) => Promise.t<res>,
+  defaults: config,
+}
+
+@module("axios") @scope("default")
+external create: {..} => axiosInstance = "create"
 
 @module("axios") @scope("default")
 external get: (string, ~config: config=?, unit) => Promise.t<response<'data>> = "get"

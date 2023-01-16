@@ -24,6 +24,15 @@ let make = () => {
   let (taskForm, setTaskForm) = React.useState(() => false)
 
   let titleInput = React.useRef(Js.Nullable.null)
+  let token = LocalStorage.getItem("token")
+
+  let config = Axios.makeConfig(
+    ~baseURL=base_url,
+    ~headers=Axios.Headers.fromObj({
+      "Authorization": "Bearer " ++ token->Belt.Option.getWithDefault(""),
+    }),
+    (),
+  )
 
   React.useEffect1(() => {
     if taskForm {
@@ -40,13 +49,24 @@ let make = () => {
   React.useEffect0(() => {
     open Promise
 
-    Axios.get(`${base_url}/tasks`, ())
+    Axios.get(`/tasks`, ~config, ())
     ->then(res => {
       setTasks(_ => res.data)
       res->resolve
     })
     ->catch(err => {
-      Js.log(err)
+      switch err {
+      | Promise.JsError(jsExn) =>
+        switch jsExn->Axios.getErrorResponse {
+        | Some(response) =>
+          if response.status == 401 {
+            LocalStorage.removeItem("token")
+            RescriptReactRouter.push("/login")
+          }
+        | None => Js.log(Js.Exn.message(jsExn))
+        }
+      | _ => Js.log("Not a JS error")
+      }
 
       err->reject
     })
@@ -67,7 +87,7 @@ let make = () => {
     } else {
       open Promise
 
-      Axios.post(`${base_url}/api/v1/tasks`, ~data={title: Some(title), status: None}, ())
+      Axios.post(`/tasks`, ~data={title: Some(title), status: None}, ~config, ())
       ->then(res => {
         setTasks(prevState => Belt.Array.concat([res.data], prevState))
         setTitle(_ => "")
@@ -91,7 +111,7 @@ let make = () => {
   let onTaskDelete = async taskId => {
     let conf = Window.confirm("Are you sure you want to delete this task?")
     if conf {
-      let _ = await Axios.delete(`${base_url}/api/v1/tasks/` ++ taskId->Belt.Int.toString, ())
+      let _ = await Axios.delete(`/tasks/` ++ taskId->Belt.Int.toString, ~config, ())
       setTasks(prevState => {prevState->Belt.Array.keep(task => task.id != taskId)})
     } else {
       Js.log("Task not deleted")
@@ -100,11 +120,12 @@ let make = () => {
 
   let updateTask = async task => {
     let res = await Axios.put(
-      `${base_url}/api/v1/tasks/` ++ task.id->Belt.Int.toString,
+      `/tasks/` ++ task.id->Belt.Int.toString,
       ~data={
         title: Some(task.title),
         status: task.status == Some("done") ? Some("done") : Some(""),
       },
+      ~config,
       (),
     )
     setTasks(prevState => {

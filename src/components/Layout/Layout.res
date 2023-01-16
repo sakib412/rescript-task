@@ -1,5 +1,5 @@
 @react.component
-let make = (~children: React.element) => {
+let make = (~children: React.element, ~user, ~setUser) => {
   let url = RescriptReactRouter.useUrl()
 
   let activeClass = (path: list<string>) => {
@@ -8,6 +8,13 @@ let make = (~children: React.element) => {
     } else {
       ""
     }
+  }
+
+  let logout = _ => {
+    LocalStorage.removeItem("token")
+
+    setUser(_ => Js.Obj.empty())
+    RescriptReactRouter.push("/login")
   }
 
   <>
@@ -22,11 +29,17 @@ let make = (~children: React.element) => {
                   {"Home"->React.string}
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link className={`nav-link${list{"login"}->activeClass}`} href="/login">
-                  {"Login"->React.string}
-                </Link>
-              </li>
+              {Belt.Option.isSome(user["id"])
+                ? <li className="nav-item" style={ReactDOM.Style.make(~cursor="pointer", ())}>
+                    <span onClick={logout} className={`nav-link${list{"login"}->activeClass}`}>
+                      {"Logout"->React.string}
+                    </span>
+                  </li>
+                : <li className="nav-item">
+                    <Link className={`nav-link${list{"login"}->activeClass}`} href="/login">
+                      {"Login"->React.string}
+                    </Link>
+                  </li>}
             </ul>
           </div>
         </div>
@@ -35,7 +48,7 @@ let make = (~children: React.element) => {
     <main className="container pt-5" style={ReactDOM.Style.make(~minHeight="80vh", ())}>
       {children}
     </main>
-    <footer className="container d-flex justify-content-center">
+    <footer className="container d-flex justify-content-center mt-5 mb-">
       <p className="">
         {"Created by "->React.string}
         <a target="_blank" href="https://github.com/sakib412"> {"Najmus Sakib"->React.string} </a>

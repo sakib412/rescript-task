@@ -1,4 +1,5 @@
 %%raw("import './Login.css'")
+let base_url: string = Env.apiUrl
 
 type loginData = {
   email: string,
@@ -6,17 +7,18 @@ type loginData = {
 }
 
 @react.component
-let make = () => {
+let make = (~setUser) => {
   let onFinish = values => {
     open Promise
     let data: loginData = {
       email: values["username"],
       password: values["password"],
     }
-    Axios.post("http://localhost:3000/api/v1/auth/login", ~data, ())
+    Axios.post(base_url ++ "/auth/login", ~data, ())
     ->then(response => {
       LocalStorage.setItem("token", response.data["token"])
       "/"->RescriptReactRouter.push
+      setUser(response.data["user"])
 
       response->resolve
     })
@@ -25,7 +27,6 @@ let make = () => {
       err->reject
     })
     ->ignore
-    Js.log2(values["username"], values["password"])
   }
 
   <div className="">
