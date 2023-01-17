@@ -9,7 +9,9 @@ type signUpData = {
 
 @react.component
 let make = () => {
+  let (loading, setLoading) = React.useState(_ => false)
   let onFinish = values => {
+    setLoading(_ => true)
     open Promise
     let data: signUpData = {
       full_name: values["full_name"],
@@ -42,6 +44,9 @@ let make = () => {
       | _ => Js.log("Not a JS error")
       }
       err->reject
+    })
+    ->finally(_ => {
+      setLoading(_ => false)
     })
     ->ignore
   }
@@ -107,7 +112,7 @@ let make = () => {
         <Input.Password />
       </Form.Item>
       <Antd.Form.Item>
-        <Antd.Button \"type"="primary" htmlType="submit" size=#large>
+        <Antd.Button \"type"="primary" loading htmlType="submit" size=#large>
           {"Signup"->React.string}
         </Antd.Button>
       </Antd.Form.Item>

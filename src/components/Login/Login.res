@@ -8,7 +8,10 @@ type loginData = {
 
 @react.component
 let make = (~setUser) => {
+  let (loading, setLoading) = React.useState(_ => false)
+
   let onFinish = values => {
+    setLoading(_ => true)
     open Promise
     let data: loginData = {
       email: values["email"],
@@ -42,6 +45,7 @@ let make = (~setUser) => {
       }
       err->reject
     })
+    ->finally(_ => setLoading(_ => false))
     ->ignore
   }
 
@@ -79,7 +83,7 @@ let make = (~setUser) => {
         <Input.Password size=#large />
       </Form.Item>
       <Form.Item>
-        <Antd.Button \"type"="primary" htmlType="submit" size=#large>
+        <Antd.Button \"type"="primary" loading htmlType="submit" size=#large>
           {"Login"->React.string}
         </Antd.Button>
       </Form.Item>
