@@ -196,13 +196,12 @@ let make = () => {
 
   let onSubmit = e => {
     e->ReactEvent.Form.preventDefault
-    setLoading(_ => true)
 
     if title == "" {
       Window.alert("Title and body are required")
     } else {
       open Promise
-
+      setLoading(_ => true)
       Axios.post(`/tasks`, ~data={title: Some(title), status: None}, ~config, ())
       ->then(res => {
         "Task added successfully"->Antd.Message.success
