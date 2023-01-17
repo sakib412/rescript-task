@@ -19,12 +19,28 @@ let make = () => {
     }
     Axios.post(base_url ++ "/users", ~data, ())
     ->then(response => {
+      "You have successfully signed up!, Please login now"->Antd.Message.success
       "/login"->RescriptReactRouter.push
 
       response->resolve
     })
     ->catch(err => {
-      Js.log(err)
+      switch err {
+      | JsError(jsExn) =>
+        switch jsExn->Axios.getErrorResponse {
+        | Some(response) =>
+          response.data["errors"]->Belt.Array.forEach(error => {
+            Antd.Message.error(error)
+          })
+
+          ignore("")
+
+        | None =>
+          Antd.Message.error(Js.Exn.message(jsExn)->Belt.Option.getWithDefault("Unknown error"))
+        }
+
+      | _ => Js.log("Not a JS error")
+      }
       err->reject
     })
     ->ignore

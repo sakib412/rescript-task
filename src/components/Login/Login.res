@@ -16,6 +16,7 @@ let make = (~setUser) => {
     }
     Axios.post(base_url ++ "/auth/login", ~data, ())
     ->then(response => {
+      "Login success"->Antd.Message.success
       LocalStorage.setItem("token", response.data["token"])
       "/"->RescriptReactRouter.push
       setUser(response.data["user"])
@@ -23,7 +24,22 @@ let make = (~setUser) => {
       response->resolve
     })
     ->catch(err => {
-      Js.log(err)
+      switch err {
+      | JsError(jsExn) =>
+        switch jsExn->Axios.getErrorResponse {
+        | Some(response) =>
+          response.data["errors"]->Belt.Array.forEach(error => {
+            Antd.Message.error(error)
+          })
+
+          ignore("")
+
+        | None =>
+          Antd.Message.error(Js.Exn.message(jsExn)->Belt.Option.getWithDefault("Unknown error"))
+        }
+
+      | _ => Js.log("Not a JS error")
+      }
       err->reject
     })
     ->ignore

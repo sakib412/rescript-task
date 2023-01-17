@@ -89,6 +89,7 @@ let make = () => {
 
       Axios.post(`/tasks`, ~data={title: Some(title), status: None}, ~config, ())
       ->then(res => {
+        "Task added successfully"->Antd.Message.success
         setTasks(prevState => Belt.Array.concat([res.data], prevState))
         setTitle(_ => "")
         res->resolve
@@ -112,6 +113,7 @@ let make = () => {
     let conf = Window.confirm("Are you sure you want to delete this task?")
     if conf {
       let _ = await Axios.delete(`/tasks/` ++ taskId->Belt.Int.toString, ~config, ())
+      "Task deleted!"->Antd.Message.success
       setTasks(prevState => {prevState->Belt.Array.keep(task => task.id != taskId)})
     } else {
       Js.log("Task not deleted")
