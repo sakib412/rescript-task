@@ -58,4 +58,6 @@ external make: (
   ~label: string=?,
   ~rules: array<rules>=?,
   ~valuePropName: string=?,
+  ~dependencies: array<string>=?,
+  ~hasFeedback: bool=?,
 ) => React.element = "Item"

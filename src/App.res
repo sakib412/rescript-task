@@ -35,7 +35,9 @@ let make = () => {
         | Some(response) =>
           if response.status == 401 {
             LocalStorage.removeItem("token")
-            RescriptReactRouter.push("/login")
+            if url.path != list{"signup"} {
+              RescriptReactRouter.push("/login")
+            }
           }
         | None => Js.log(Js.Exn.message(jsExn))
         }
@@ -54,6 +56,7 @@ let make = () => {
 
   let comp = switch url.path {
   | list{"login"} => <Login setUser />
+  | list{"signup"} => <Signup />
   | list{} => <Task />
   | _ => <PageNotFound />
   }

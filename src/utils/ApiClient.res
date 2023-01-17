@@ -1,4 +1,4 @@
-// Don't know how to create axiosninstance with token in the header  in the first place, tried this one but it didn't work
+// Don't know how to create axiosninstance with token in the header  in the first place, tried this one but it didn't work I can write this in js but no idea how to do it in rescript :(
 let base_url: string = Env.apiUrl
 
 let config = {

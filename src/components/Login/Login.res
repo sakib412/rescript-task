@@ -11,7 +11,7 @@ let make = (~setUser) => {
   let onFinish = values => {
     open Promise
     let data: loginData = {
-      email: values["username"],
+      email: values["email"],
       password: values["password"],
     }
     Axios.post(base_url ++ "/auth/login", ~data, ())
@@ -37,12 +37,16 @@ let make = (~setUser) => {
       autoComplete="off"
       layout=#vertical>
       <Form.Item
-        label="Username"
-        name="username"
+        label="Email"
+        name="email"
         rules={[
           {
             required: true,
             message: "Please input your username!",
+          },
+          {
+            \"type": "email",
+            message: "The input is not valid E-mail!",
           },
         ]}>
         <Input size=#large />
@@ -64,7 +68,7 @@ let make = (~setUser) => {
         </Antd.Button>
       </Form.Item>
       {"Or "->React.string}
-      <Link href=""> {" Register now!"->React.string} </Link>
+      <Link href="/signup"> {" Register now!"->React.string} </Link>
     </Antd.Form>
   </div>
 }
