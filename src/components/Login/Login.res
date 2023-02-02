@@ -62,7 +62,7 @@ let make = (~setUser) => {
         rules={[
           {
             required: true,
-            message: "Please input your username!",
+            message: "Please input your email!",
           },
           {
             \"type": "email",
